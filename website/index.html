@@ -3,12 +3,17 @@
 <title>Density contours</title>
 <link rel="stylesheet" type="text/css" href="./inspector.css">
 <link rel="stylesheet" type="text/css" href="./lineplots.css">
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
+<!-- <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script> -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <!-- import jQuery -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+<!-- <link rel="stylesheet" href="/resources/demos/style.css"> -->
+<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
 
 <script src="./lineplots.js"></script>
 
@@ -16,10 +21,14 @@
   <center><h1 id="title">Impact of Big Contracts 📝💰 on Player Performance 📉 📈 in Major League Baseball ⚾</h1></center>
     <div id="floating-panel">
       <b>Choose a Player:</b><br/>
-      <select name="player" id="playerdd"></select>
+      <!-- <select name="player" id="playerdd"></select><br/> -->
+      <input type="text" placeholder="Search.." name="search" id="searchbar">
+      <!-- Search bar with autocomplete -->
+      
+
       <hr/>
       <!-- <b>Choose Players:</b><div id="player-checkboxes"></div> -->
-
+      
       <!-- <hr/> -->
       <b>Legend:</b><div id="legend"></div>
       <!-- <b>Legend:</b><br/><br/> -->
