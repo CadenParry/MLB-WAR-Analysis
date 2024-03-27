@@ -104,6 +104,7 @@ function createLinePlot(data, selected_player){
     var break_year = 0;
     var break_idx = 0;
 
+
     function prepend(value, array) {
         var newArray = array.slice();
         newArray.unshift(value);
@@ -119,24 +120,40 @@ function createLinePlot(data, selected_player){
         }
     }
     if(break_year == 0){
+        console.log('color')
+        console.log(color(0));
+        console.log(color(1));
+        makePlayerLine(svg, data_in_contract, '#ff7f0e', xscale, yscale, "In Contract", true);
+        makePlayerLine(svg, data_out_contract, '#1f77b4', xscale, yscale,  "Out of Contract", true);
         
-        makePlayerLine(svg, data_out_contract, color(1), xscale, yscale,  "Out of Contract", true);
-        makePlayerLine(svg, data_in_contract, color(0), xscale, yscale, "In Contract", true);
+
     }
     else{
 
-        data_out_contract_1 = data_out_contract.slice(0, break_idx);
-        data_out_contract_2 = data_out_contract.slice(break_idx, data_out_contract.length);
+        data_out_contract_1 = data_out_contract.slice(break_idx, data_out_contract.length);
+        data_out_contract_2 = data_out_contract.slice(0, break_idx);
+
+        console.log('now')
+        console.log(data_out_contract_1);
+        console.log(data_out_contract_2);
+        console.log(data_in_contract)
 
         // prepend the last element of data_in_contract to data_out_contract_1
+        data_out_contract_1 = prepend(data_in_contract[data_in_contract.length - 1], data_out_contract_1);
 
-        data_out_contract_2 = prepend(data_in_contract[data_in_contract.length - 1], data_out_contract_2);
+        //data_in_contract = prepend(data_out_contract_2[data_out_contract_2.length - 1], data_out_contract);
+        data_in_contract.unshift(data_out_contract_2[data_out_contract_2.length - 1])
 
-        // data_out_contract_1.push(data_in_contract[data_in_contract.length - 1]);
+        console.log('now')
+        //console.log(data_out_contract_1);
+        //console.log(data_out_contract_2);
+        console.log(data_out_contract_2[data_out_contract_2.length - 1])
+        console.log(data_in_contract)
 
-        makePlayerLine(svg, data_out_contract_1, color(1), xscale, yscale,  "Out of Contract", true);
-        makePlayerLine(svg, data_out_contract_2, color(1), xscale, yscale,  "Out of Contract", false);
-        makePlayerLine(svg, data_in_contract, color(0), xscale, yscale, "In Contract", true);
+        makePlayerLine(svg, data_in_contract, '#ff7f0e', xscale, yscale, "In Contract", true);
+        makePlayerLine(svg, data_out_contract_1, '#1f77b4', xscale, yscale,  "Out of Contract", true);
+        makePlayerLine(svg, data_out_contract_2, '#1f77b4', xscale, yscale,  "Out of Contract", false);
+  
     }
 
 
@@ -157,7 +174,7 @@ function makeHorizontalLine(svg, yValue, xscale, yscale, color, label){
        .attr("x2", xscale.range()[1])  // end of the line at the right side of the graph
        .attr("y2", yscale(yValue))     // y-position is the same as y1 to make the line horizontal
        .attr("stroke", color)          // color of the line
-       .attr("stroke-width", 5)        // thickness of the line
+       .attr("stroke-width", 3)        // thickness of the line
        .attr("stroke-dasharray", "5,5") // make the line dashed
        .attr("stroke-opacity", 0.4);   // make the line lighter
 
@@ -211,7 +228,7 @@ function makeAvgLine(svg, avgData, color, xscale, yscale, label, pos){
     svg.selectAll("dot")
         .data(avgData)
         .enter().append("circle")
-        .attr("r", 10)
+        .attr("r", 7)
         .attr("cx", function(d) { return xscale(d.Year);})
         .attr("cy", function(d) { return yscale(parseFloat(pos == "h" ? d.OPS : d.ERA )); })
         .attr("fill", color);
@@ -242,8 +259,8 @@ function makeAvgLine(svg, avgData, color, xscale, yscale, label, pos){
 
 function makePlayerLine(svg, playerdata, color, xscale, yscale, label, add_to_legend){
 
-    console.log(label);
-    console.log(playerdata);
+    // console.log(label);
+    // console.log(playerdata);
 
     // Declare the line generator.
     const player_line = d3.line()
@@ -262,7 +279,7 @@ function makePlayerLine(svg, playerdata, color, xscale, yscale, label, add_to_le
     svg.selectAll("dot")
         .data(playerdata)
         .enter().append("circle")
-        .attr("r", 10)
+        .attr("r", 7)
         .attr("cx", function(d) { return xscale(d.yearID);})
         .attr("cy", function(d) { return yscale(parseFloat(d.WAR)); })
         .attr("fill", color);
