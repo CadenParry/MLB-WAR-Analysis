@@ -120,13 +120,9 @@ function createLinePlot(data, selected_player){
         }
     }
     if(break_year == 0){
-        console.log('color')
-        console.log(color(0));
-        console.log(color(1));
-        makePlayerLine(svg, data_in_contract, '#ff7f0e', xscale, yscale, "In Contract", true);
-        makePlayerLine(svg, data_out_contract, '#1f77b4', xscale, yscale,  "Out of Contract", true);
-        
 
+        makePlayerLine(svg, data_in_contract, '#ff7f0e', xscale, yscale, "WAR During Largest Contract", true, false);
+        makePlayerLine(svg, data_out_contract, '#1f77b4', xscale, yscale,  "WAR During Largest Contrac", true, false);
     }
     else{
 
@@ -142,17 +138,17 @@ function createLinePlot(data, selected_player){
         data_out_contract_1 = prepend(data_in_contract[data_in_contract.length - 1], data_out_contract_1);
 
         //data_in_contract = prepend(data_out_contract_2[data_out_contract_2.length - 1], data_out_contract);
-        data_in_contract.unshift(data_out_contract_2[data_out_contract_2.length - 1])
+       data_in_contract.unshift(data_out_contract_2[data_out_contract_2.length - 1])
 
-        console.log('now')
-        //console.log(data_out_contract_1);
-        //console.log(data_out_contract_2);
-        console.log(data_out_contract_2[data_out_contract_2.length - 1])
-        console.log(data_in_contract)
+       data_out_contract_2
 
-        makePlayerLine(svg, data_in_contract, '#ff7f0e', xscale, yscale, "In Contract", true);
-        makePlayerLine(svg, data_out_contract_1, '#1f77b4', xscale, yscale,  "Out of Contract", true);
-        makePlayerLine(svg, data_out_contract_2, '#1f77b4', xscale, yscale,  "Out of Contract", false);
+        console.log('con 2')
+        console.log(data_out_contract_2);
+  
+
+        makePlayerLine(svg, data_in_contract, '#ff7f0e', xscale, yscale, "In Contract", true, true);
+        makePlayerLine(svg, data_out_contract_1, '#1f77b4', xscale, yscale,  "Out of Contract", true, true);
+        makePlayerLine(svg, data_out_contract_2, '#1f77b4', xscale, yscale,  "Out of Contract", false, false);
   
     }
 ``
@@ -256,7 +252,7 @@ function makeAvgLine(svg, avgData, color, xscale, yscale, label, pos){
 
 }
 
-function makePlayerLine(svg, playerdata, color, xscale, yscale, label, add_to_legend){
+function makePlayerLine(svg, playerdata, color, xscale, yscale, label, add_to_legend, colorChange){
 
     // console.log(label);
     // console.log(playerdata);
@@ -273,16 +269,31 @@ function makePlayerLine(svg, playerdata, color, xscale, yscale, label, add_to_le
         .attr("stroke-width", 3)
         .attr("d", player_line(playerdata));
 
-
-    // Add dots to the line
-    svg.selectAll("dot")
+    if(colorChange)
+    {
+        // Add dots to the line
+        svg.selectAll("dot")
+        .data(playerdata)
+        .enter().append("circle")
+        .attr("r", 7)
+        .attr("cx", function(d) { return xscale(d.yearID);})
+        .attr("cy", function(d) { return yscale(parseFloat(d.WAR)); })
+        .attr("fill", function(d, i) { 
+            return i === 0 ? "#ff7f0e" : color; 
+        });
+    }
+    else
+    {
+        // Add dots to the line
+        svg.selectAll("dot")
         .data(playerdata)
         .enter().append("circle")
         .attr("r", 7)
         .attr("cx", function(d) { return xscale(d.yearID);})
         .attr("cy", function(d) { return yscale(parseFloat(d.WAR)); })
         .attr("fill", color);
-
+    }
+    
     // Add to legend
     if (add_to_legend){
             
