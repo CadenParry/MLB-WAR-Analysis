@@ -155,12 +155,11 @@ function createLinePlot(data, selected_player){
         makePlayerLine(svg, data_out_contract_2, '#1f77b4', xscale, yscale,  "Out of Contract", false);
   
     }
-
-
-    // makeHorizontalLine(svg, 8, xscale, yscale, "green", "MVP Level");
-    // makeHorizontalLine(svg, 5, xscale, yscale, "blue", "All Star Level");  
-    // makeHorizontalLine(svg, 2, xscale, yscale, "orange", "Substitute Level");
-    // makeHorizontalLine(svg, 0, xscale, yscale, "red", "Replacement Level");
+``
+    makeHorizontalLine(svg, 8, xscale, yscale, "green", "MVP Level");
+    makeHorizontalLine(svg, 5, xscale, yscale, "blue", "All Star Level");  
+    makeHorizontalLine(svg, 2, xscale, yscale, "orange", "Substitute Level");
+    makeHorizontalLine(svg, 0, xscale, yscale, "red", "Replacement Level");
     
     // Add svg to the body
     document.body.appendChild(svg.node());
