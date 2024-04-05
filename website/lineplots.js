@@ -121,6 +121,8 @@ function createLinePlot(data, selected_player){
     }
     if(break_year == 0){
 
+        //data_out_contract = prepend(data_in_contract[data_in_contract.length - 1], data_out_contract);
+
         makePlayerLine(svg, data_in_contract, '#ff7f0e', xscale, yscale, "WAR During Largest Contract", true, false);
         makePlayerLine(svg, data_out_contract, '#1f77b4', xscale, yscale,  "WAR During Largest Contrac", true, false);
     }
