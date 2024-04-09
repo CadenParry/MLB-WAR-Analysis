@@ -3,7 +3,7 @@ var avgDataGlobal;
 
 function readData(){
     // Read the data from the csv file and call the initialize function
-    d3.csv("player_visualization.csv", d3.autoType).then(playerData => {
+    d3.csv("new_player_visualization.csv", d3.autoType).then(playerData => {
         initialize(playerData);
 
         autocompleteSearchBar(playerData);
@@ -25,9 +25,6 @@ function autocompleteSearchBar(playerData){
     $( "#searchbar" ).on( "autocompleteselect", function( event, ui ) {
 
         var selected_player = ui.item.value;
-
-        console.log(selected_player);
-
         createLinePlot(playerData, selected_player);
     });
 }
@@ -59,7 +56,7 @@ function createLinePlot(data, selected_player){
     // Get colors for the players
     var color = d3.scaleOrdinal(d3.schemeCategory10);
 
-    console.log(selected_player);
+    //console.log(selected_player);
 
     var filtered = data.filter(function(d){ return selected_player == d.player; })
     
@@ -112,48 +109,31 @@ function createLinePlot(data, selected_player){
       }
 
     for (var i = 1; i < data_out_contract.length; i++){
-        console.log(data_out_contract[i-1].yearID - data_out_contract[i].yearID);
         if ((data_out_contract[i-1].yearID - data_out_contract[i].yearID) > 1){
             break_year = data_out_contract[i].yearID;
             break_idx = i;
             break;
         }
     }
-    if(break_year == 0){
-
-        //data_out_contract = prepend(data_in_contract[data_in_contract.length - 1], data_out_contract);
-
-        makePlayerLine(svg, data_in_contract, '#ff7f0e', xscale, yscale, "WAR During Largest Contract", true, false);
-        makePlayerLine(svg, data_out_contract, '#1f77b4', xscale, yscale,  "WAR During Largest Contrac", true, false);
+    if(break_year == 0)
+    {
+        makePlayerLine(svg, data_in_contract, '#ff7f0e', xscale, yscale, "In Contract", true, false);
+        makePlayerLine(svg, data_out_contract, '#1f77b4', xscale, yscale,  "Out Contract", true, false);
     }
     else{
-
         data_out_contract_1 = data_out_contract.slice(break_idx, data_out_contract.length);
         data_out_contract_2 = data_out_contract.slice(0, break_idx);
-
-        console.log('now')
-        console.log(data_out_contract_1);
-        console.log(data_out_contract_2);
-        console.log(data_in_contract)
 
         // prepend the last element of data_in_contract to data_out_contract_1
         data_out_contract_1 = prepend(data_in_contract[data_in_contract.length - 1], data_out_contract_1);
 
         //data_in_contract = prepend(data_out_contract_2[data_out_contract_2.length - 1], data_out_contract);
-       data_in_contract.unshift(data_out_contract_2[data_out_contract_2.length - 1])
-
-       data_out_contract_2
-
-        console.log('con 2')
-        console.log(data_out_contract_2);
-  
+        data_in_contract.unshift(data_out_contract_2[data_out_contract_2.length - 1])
 
         makePlayerLine(svg, data_in_contract, '#ff7f0e', xscale, yscale, "In Contract", true, true);
         makePlayerLine(svg, data_out_contract_1, '#1f77b4', xscale, yscale,  "Out of Contract", true, true);
         makePlayerLine(svg, data_out_contract_2, '#1f77b4', xscale, yscale,  "Out of Contract", false, false);
-  
     }
-``
     makeHorizontalLine(svg, 8, xscale, yscale, "green", "MVP Level");
     makeHorizontalLine(svg, 5, xscale, yscale, "blue", "All Star Level");  
     makeHorizontalLine(svg, 2, xscale, yscale, "orange", "Substitute Level");
@@ -257,7 +237,7 @@ function makeAvgLine(svg, avgData, color, xscale, yscale, label, pos){
 function makePlayerLine(svg, playerdata, color, xscale, yscale, label, add_to_legend, colorChange){
 
     // console.log(label);
-    // console.log(playerdata);
+    //console.log(playerdata);
 
     // Declare the line generator.
     const player_line = d3.line()
