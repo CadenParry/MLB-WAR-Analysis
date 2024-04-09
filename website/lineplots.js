@@ -10,6 +10,8 @@ function readData(){
     });
 }
 
+
+
 function autocompleteSearchBar(playerData){
     var players = playerData.map(function(d){ return d.player; });
     var unique_players = [...new Set(players)];
@@ -25,8 +27,47 @@ function autocompleteSearchBar(playerData){
     $( "#searchbar" ).on( "autocompleteselect", function( event, ui ) {
 
         var selected_player = ui.item.value;
+        
+        testPlayerInfo(selected_player, playerData)
         createLinePlot(playerData, selected_player);
     });
+}
+
+function testPlayerInfo(selected_player, data)
+{
+    let formatter = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        });
+    
+    let filtered = data.filter(function(d){ return selected_player == d.player; })
+
+    player = filtered[0].player
+    amount = formatter.format(filtered[0].amount).replace('.00', '')
+    length = filtered[0].length
+
+    inContract = 0
+    inCounter = 
+    outContract = 0
+    outCounter = 0
+    for (let i = 0; i < filtered.length; i++) {
+        if(filtered[i].out_of_contract == "True"){
+            outContract += parseFloat(filtered[i].WAR)
+            outCounter += 1
+        }
+        else{
+            inContract += parseFloat(filtered[i].WAR)
+            inCounter += 1
+        }
+    }
+    
+    console.log(player);
+    console.log("Largest Contract: " + length + " year " + amount + " contract ")
+    console.log("Average WAR Out of Contract: " + outContract/outCounter)
+    console.log("Average WAR In Contract: " + inContract/inCounter)
+    console.log("Dollar per WAR In Contract: ")
+    console.log("Dollar per WAR Out of Contract: ")
+
 }
 
 function initialize(playerData){
@@ -42,8 +83,8 @@ function createLinePlot(data, selected_player){
     const height = 400;
     const marginTop = 40;
     const marginRight = 30;
-    const marginBottom = 30;
-    const marginLeft = 40;
+    const marginBottom = 50;
+    const marginLeft = 60;
 
     // Create the SVG container.
     const svg = d3.create("svg")
@@ -51,33 +92,37 @@ function createLinePlot(data, selected_player){
         .attr("width", width)
         .attr("height", height)
         .attr("viewBox", [0, 0, width, height])
-        .attr("style", "max-width: 100%; height: auto; height: intrinsic;");
+        .attr("style", "max-width: 100%; height: auto; height: intrinsic;")
+        .style("background-color", "white")
 
     // Get colors for the players
     var color = d3.scaleOrdinal(d3.schemeCategory10);
 
-    //console.log(selected_player);
-
     var filtered = data.filter(function(d){ return selected_player == d.player; })
     
-    var data_out_contract = filtered.filter(function(d){ return d.out_of_contract == "True"; });
-    var data_in_contract = filtered.filter(function(d){ return d.out_of_contract == "False"; });
+    let data_out_contract = filtered.filter(function(d){ return d.out_of_contract == "True"; });
+    let data_in_contract = filtered.filter(function(d){ return d.out_of_contract == "False"; });
 
     // Declare the x (horizontal position) and y (vertical position) scales.
     const xscale = d3.scaleLinear()
         .domain(d3.extent(filtered, (_, i) => filtered[i].yearID))
-    .range([marginLeft, width - marginRight]);
+        .range([marginLeft, width - marginRight])
 
     const yscale = d3.scaleLinear().domain([-2, 13]).range([height - marginBottom, marginTop]);
-
 
     // Add the x-axis.
     svg.append("g")
     .attr("transform", `translate(0,${height - marginBottom})`)
     .call(d3.axisBottom(xscale)
-        .tickFormat(d3.format("d")) // format labels as integers
-        .ticks(d3.max(filtered, (_, i) => filtered[i].yearID) - d3.min(filtered, (_, i) => filtered[i].yearID) + 1) // one tick for each year
-        .tickSizeOuter(0));
+    .tickFormat(d3.format("d")) // format labels as integers
+    .ticks(d3.max(filtered, (_, i) => filtered[i].yearID) - d3.min(filtered, (_, i) => filtered[i].yearID) + 1) // one tick for each year
+    .tickSizeOuter(0))
+
+    // Add x label
+    svg.append("text")             
+    .attr("transform", "translate(" + (width/2) + " ," + ((height - marginBottom/2) + 15) + ")")
+    .style("text-anchor", "middle")
+    .text("Year");
 
     // make the y-axis -2 to 13 and give the y-axis labels from -2 to 13
     svg.append("g")
@@ -94,8 +139,13 @@ function createLinePlot(data, selected_player){
             .attr("text-anchor", "start")
             .attr("font-size", "20px")
             .text("WAR"));
-    
-    // console.log(data_out_contract);
+
+    // Add y label
+    svg.append("text")             
+    .attr("transform", "translate(" + (20) + " ," + (height/2) + ")")
+    .style("text-anchor", "middle")
+    .style("font-size", "15px")  // Increase font size
+    .text("WAR");
 
     // Find break in years for out of contract
     var break_year = 0;
@@ -115,6 +165,7 @@ function createLinePlot(data, selected_player){
             break;
         }
     }
+
     if(break_year == 0)
     {
         makePlayerLine(svg, data_in_contract, '#ff7f0e', xscale, yscale, "In Contract", true, false);
@@ -142,7 +193,6 @@ function createLinePlot(data, selected_player){
     // Add svg to the body
     document.body.appendChild(svg.node());
 }
-
 
 function makeHorizontalLine(svg, yValue, xscale, yscale, color, label){
     var line = svg.append("line")
@@ -185,59 +235,7 @@ function makeHorizontalLine(svg, yValue, xscale, yscale, color, label){
     });
 }
 
-
-function makeAvgLine(svg, avgData, color, xscale, yscale, label, pos){
-
-    // Declare the line generator.
-    const avg_line = d3.line()
-        .x(d => xscale(d.yearID))
-        .y(d => yscale(pos == "h" ? d.OPS : d.ERA));
-
-    // Append a path for the line.
-    svg.append("path")
-        .attr("fill", "none")
-        .attr("stroke", color)
-        .attr("stroke-width", 3)
-        .attr("d", avg_line(avgData));
-
-
-    // Add dots to the line
-    svg.selectAll("dot")
-        .data(avgData)
-        .enter().append("circle")
-        .attr("r", 7)
-        .attr("cx", function(d) { return xscale(d.Year);})
-        .attr("cy", function(d) { return yscale(parseFloat(pos == "h" ? d.OPS : d.ERA )); })
-        .attr("fill", color);
-
-    // Add to legend
-    d3.select("#legend").append("div")
-        .attr("class", "dot")
-        .style("background-color", color);
-
-    d3.select("#legend").append("text")
-        .text(label)
-        .style("padding", "5px")
-        .style("font-size", "18px");
-
-    d3.select("#legend").append("br")
-
-    // Add the tooltip
-    svg.selectAll("dot")
-        .data(avgData)
-        .enter().append("text")
-        .attr("x", function(d) { return xscale(d.Year); })
-        .attr("y", function(d) { return yscale(parseFloat(pos == "h" ? d.OPS : d.ERA )); })
-        // .text(function(d) { return d.OPS; })
-        // .style("font-size", "15px")
-        // .attr("alignment-baseline","middle");
-
-}
-
 function makePlayerLine(svg, playerdata, color, xscale, yscale, label, add_to_legend, colorChange){
-
-    // console.log(label);
-    //console.log(playerdata);
 
     // Declare the line generator.
     const player_line = d3.line()
@@ -303,86 +301,132 @@ function makePlayerLine(svg, playerdata, color, xscale, yscale, label, add_to_le
 
 }
 
+// function makeAvgLine(svg, avgData, color, xscale, yscale, label, pos){
 
-function makeBarPlot(data){
+//     // Declare the line generator.
+//     const avg_line = d3.line()
+//         .x(d => xscale(d.yearID))
+//         .y(d => yscale(pos == "h" ? d.OPS : d.ERA));
+
+//     // Append a path for the line.
+//     svg.append("path")
+//         .attr("fill", "none")
+//         .attr("stroke", color)
+//         .attr("stroke-width", 3)
+//         .attr("d", avg_line(avgData));
 
 
-    var aggdata = d3.rollup(data, v => d3.mean(v, d => d.val), d => d.player);
+//     // Add dots to the line
+//     svg.selectAll("dot")
+//         .data(avgData)
+//         .enter().append("circle")
+//         .attr("r", 7)
+//         .attr("cx", function(d) { return xscale(d.Year);})
+//         .attr("cy", function(d) { return yscale(parseFloat(pos == "h" ? d.OPS : d.ERA )); })
+//         .attr("fill", color);
 
-    newdata = [];
-    var keys = Array.from(aggdata.keys());
-    for (var i = 0; i < keys.length; i++){
-        newdata.push({'name': keys[i], 'sum': aggdata.get(keys[i])});
-    }
+//     // Add to legend
+//     d3.select("#legend").append("div")
+//         .attr("class", "dot")
+//         .style("background-color", color);
 
-    //Sort newdata by sum
-    newdata.sort((a, b) => (a.sum > b.sum) ? 1 : -1);
+//     d3.select("#legend").append("text")
+//         .text(label)
+//         .style("padding", "5px")
+//         .style("font-size", "18px");
 
-    d3.select("#barplot").remove();
+//     d3.select("#legend").append("br")
 
-    // Declare the chart dimensions and margins.
-    const width = 928;
-    const height = 200;
-    const marginTop = 40;
-    const marginRight = 30;
-    const marginBottom = 30;
-    const marginLeft = 40;
+//     // Add the tooltip
+//     svg.selectAll("dot")
+//         .data(avgData)
+//         .enter().append("text")
+//         .attr("x", function(d) { return xscale(d.Year); })
+//         .attr("y", function(d) { return yscale(parseFloat(pos == "h" ? d.OPS : d.ERA )); })
+//         // .text(function(d) { return d.OPS; })
+//         // .style("font-size", "15px")
+//         // .attr("alignment-baseline","middle");
 
-    // Create the SVG container.
-    const svg = d3.create("svg")
-        .attr("id", "barplot")
-        .attr("width", width)
-        .attr("height", height)
-        .attr("viewBox", [0, 0, width, height])
-        .attr("style", "max-width: 100%; height: auto; height: intrinsic;");
+// }
+// function makeBarPlot(data){
+
+
+//     var aggdata = d3.rollup(data, v => d3.mean(v, d => d.val), d => d.player);
+
+//     newdata = [];
+//     var keys = Array.from(aggdata.keys());
+//     for (var i = 0; i < keys.length; i++){
+//         newdata.push({'name': keys[i], 'sum': aggdata.get(keys[i])});
+//     }
+
+//     //Sort newdata by sum
+//     newdata.sort((a, b) => (a.sum > b.sum) ? 1 : -1);
+
+//     d3.select("#barplot").remove();
+
+//     // Declare the chart dimensions and margins.
+//     const width = 928;
+//     const height = 200;
+//     const marginTop = 40;
+//     const marginRight = 30;
+//     const marginBottom = 30;
+//     const marginLeft = 40;
+
+//     // Create the SVG container.
+//     const svg = d3.create("svg")
+//         .attr("id", "barplot")
+//         .attr("width", width)
+//         .attr("height", height)
+//         .attr("viewBox", [0, 0, width, height])
+//         .attr("style", "max-width: 100%; height: auto; height: intrinsic;");
         
-        //d3.groupSort(data, ([d]) => -d.frequency, (d) => d.letter)) // descending frequency
-    // Declare the x (horizontal position) scale.
-    const x = d3.scaleBand()
-        .domain(newdata.map(d => d.name))
-        .range([marginLeft, width - marginRight])
-        .padding(0.1);
+//         //d3.groupSort(data, ([d]) => -d.frequency, (d) => d.letter)) // descending frequency
+//     // Declare the x (horizontal position) scale.
+//     const x = d3.scaleBand()
+//         .domain(newdata.map(d => d.name))
+//         .range([marginLeft, width - marginRight])
+//         .padding(0.1);
 
-    // Declare the y (vertical position) scale.
-    const y = d3.scaleLinear()
-        .domain([0, d3.max(newdata, d => d.sum)]).nice()
-        .range([height - marginBottom, marginTop]);
+//     // Declare the y (vertical position) scale.
+//     const y = d3.scaleLinear()
+//         .domain([0, d3.max(newdata, d => d.sum)]).nice()
+//         .range([height - marginBottom, marginTop]);
 
-    // Add a rect for each bar.
-    svg.append("g")
-        .attr("fill", "steelblue")
-    .selectAll()
-    .data(newdata)
-    .join("rect")
-        .attr("x", (d) => x(d.name))
-        .attr("y", (d) => y(d.sum))
-        .attr("height", (d) => y(0) - y(d.sum))
-        .attr("width", x.bandwidth());
+//     // Add a rect for each bar.
+//     svg.append("g")
+//         .attr("fill", "steelblue")
+//     .selectAll()
+//     .data(newdata)
+//     .join("rect")
+//         .attr("x", (d) => x(d.name))
+//         .attr("y", (d) => y(d.sum))
+//         .attr("height", (d) => y(0) - y(d.sum))
+//         .attr("width", x.bandwidth());
 
-    // Add the x-axis.
-    svg.append("g")
-    .attr("transform", `translate(0,${height - marginBottom})`)
-    .call(d3.axisBottom(xscale)
-        .tickFormat(d3.format("d")) // format labels as integers
-        .ticks(d3.max(filtered, (_, i) => filtered[i].Year) - d3.min(filtered, (_, i) => filtered[i].Year) + 1) // one tick for each year
-        .tickSizeOuter(0));
+//     // Add the x-axis.
+//     svg.append("g")
+//     .attr("transform", `translate(0,${height - marginBottom})`)
+//     .call(d3.axisBottom(xscale)
+//         .tickFormat(d3.format("d")) // format labels as integers
+//         .ticks(d3.max(filtered, (_, i) => filtered[i].Year) - d3.min(filtered, (_, i) => filtered[i].Year) + 1) // one tick for each year
+//         .tickSizeOuter(0));
 
-    // Add the y-axis and label, and remove the domain line.
-    svg.append("g")
-        .attr("transform", `translate(${marginLeft},0)`)
-        .call(d3.axisLeft(y).tickFormat((y) => (y * 100).toFixed()))
-        .call(g => g.select(".domain").remove())
-        .call(g => g.append("text")
-            .attr("x", -marginLeft)
-            .attr("y", 10)
-            .attr("fill", "currentColor")
-            .attr("text-anchor", "start")
-            .text("Average value of metric (%)"));
+//     // Add the y-axis and label, and remove the domain line.
+//     svg.append("g")
+//         .attr("transform", `translate(${marginLeft},0)`)
+//         .call(d3.axisLeft(y).tickFormat((y) => (y * 100).toFixed()))
+//         .call(g => g.select(".domain").remove())
+//         .call(g => g.append("text")
+//             .attr("x", -marginLeft)
+//             .attr("y", 10)
+//             .attr("fill", "currentColor")
+//             .attr("text-anchor", "start")
+//             .text("Average value of metric (%)"));
 
-        // Return the SVG element.
-        // return svg.node();
-    document.body.appendChild(svg.node());
+//         // Return the SVG element.
+//         // return svg.node();
+//     document.body.appendChild(svg.node());
 
-}
+// }
 
 readData();

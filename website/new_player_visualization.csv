@@ -1253,7 +1253,7 @@
 1251,3043,Eddie Rosario,rosared01,2017.0,h,1.6,2.0,18000000.0,True,12.4
 1252,3044,Eddie Rosario,rosared01,2016.0,h,1.2,2.0,18000000.0,True,12.4
 1253,3045,Eddie Rosario,rosared01,2015.0,h,2.2,2.0,18000000.0,True,12.4
-1254,3074,Adley Rutschman,rutscad01,2023.0,h,4.3,1.0,760300.0,True,9.7
+1254,3074,Adley Rutschman,rutscad01,2023.0,h,4.3,1.0,760300.0,False,9.7
 1255,3075,Adley Rutschman,rutscad01,2022.0,h,5.4,1.0,760300.0,True,9.7
 1256,3078,Gary Sanchez,sanchga02,2023.0,h,2.4,1.0,9000000.0,True,14.8
 1257,3079,Gary Sanchez,sanchga02,2022.0,h,0.8,1.0,9000000.0,False,14.8
@@ -4779,7 +4779,7 @@
 4777,22339,Aaron Rowand,rowanaa01,2010.0,h,0.5,5.0,60000000.0,False,20.9
 4778,22340,Aaron Rowand,rowanaa01,2009.0,h,0.9,5.0,60000000.0,False,20.9
 4779,22341,Aaron Rowand,rowanaa01,2008.0,h,0.6,5.0,60000000.0,False,20.9
-4780,22342,Aaron Rowand,rowanaa01,2007.0,h,5.1,5.0,60000000.0,False,20.9
+4780,22342,Aaron Rowand,rowanaa01,2007.0,h,5.1,5.0,60000000.0,True,20.9
 4781,22343,Aaron Rowand,rowanaa01,2006.0,h,0.5,5.0,60000000.0,True,20.9
 4782,22344,Aaron Rowand,rowanaa01,2005.0,h,3.7,5.0,60000000.0,True,20.9
 4783,22345,Aaron Rowand,rowanaa01,2004.0,h,5.7,5.0,60000000.0,True,20.9
@@ -4902,6 +4902,7 @@
 4900,22907,David Eckstein,eckstda01,2002.0,h,5.2,1.0,1000000.0,True,21.0
 4901,22908,David Eckstein,eckstda01,2001.0,h,4.3,1.0,1000000.0,True,21.0
 4902,22909,Jim Edmonds,edmonji01,2010.0,h,1.9,6.0,57000000.0,True,60.7
+4902,22909,Jim Edmonds,edmonji01,2009.0,h,0,6.0,57000000.0,True,60.7
 4903,22910,Jim Edmonds,edmonji01,2008.0,h,0.1,6.0,57000000.0,True,60.7
 4904,22911,Jim Edmonds,edmonji01,2007.0,h,0.2,6.0,57000000.0,True,60.7
 4905,22912,Jim Edmonds,edmonji01,2006.0,h,1.3,6.0,57000000.0,True,60.7
