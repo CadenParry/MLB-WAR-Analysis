@@ -64,6 +64,16 @@ function testPlayerInfo(selected_player, data)
     console.log("Largest Contract: " + length + " year " + amount + " contract ")
 
     // color scalled bar (red to green)
+
+    // player name to all caps
+    player = player.toUpperCase();
+    $("#playername").text(player);
+    $("#largestcontract").text(length + " years " + amount);
+    $("#avgwar-out").text((outContract/outCounter).toFixed(2));
+    $("#avgwar-in").text((inContract/inCounter).toFixed(2));
+    $("#dollarperwar-in").text("ABC");
+    $("#dollarperwar-out").text("DEF");
+
     console.log("Average WAR Out of Contract: " + outContract/outCounter)
     console.log("Average WAR In Contract: " + inContract/inCounter)
     console.log("Dollar per WAR In Contract: ")
@@ -167,24 +177,30 @@ function createLinePlot(data, selected_player){
         }
     }
 
-    if(break_year == 0)
-    {
-        makePlayerLine(svg, data_in_contract, '#ff7f0e', xscale, yscale, "In Contract", true, false);
-        makePlayerLine(svg, data_out_contract, '#1f77b4', xscale, yscale,  "Out Contract", true, false);
-    }
-    else{
-        data_out_contract_1 = data_out_contract.slice(break_idx, data_out_contract.length);
-        data_out_contract_2 = data_out_contract.slice(0, break_idx);
+    if(document.getElementById("searchbar").value != ""){
 
-        // prepend the last element of data_in_contract to data_out_contract_1
-        data_out_contract_1 = prepend(data_in_contract[data_in_contract.length - 1], data_out_contract_1);
+        if(break_year == 0)
+        {
+            // append the last element of data_in_contract to data_out_contract
+            var tmp = data_in_contract[data_in_contract.length - 1];
+            data_out_contract.unshift(tmp);
+            makePlayerLine(svg, data_out_contract, '#1f77b4', xscale, yscale,  "Out Contract", true, false);
+            makePlayerLine(svg, data_in_contract, '#ff7f0e', xscale, yscale, "In Contract", true, false);
+        }
+        else{
+            data_out_contract_1 = data_out_contract.slice(break_idx, data_out_contract.length);
+            data_out_contract_2 = data_out_contract.slice(0, break_idx);
 
-        //data_in_contract = prepend(data_out_contract_2[data_out_contract_2.length - 1], data_out_contract);
-        data_in_contract.unshift(data_out_contract_2[data_out_contract_2.length - 1])
+            // prepend the last element of data_in_contract to data_out_contract_1
+            data_out_contract_1 = prepend(data_in_contract[data_in_contract.length - 1], data_out_contract_1);
 
-        makePlayerLine(svg, data_in_contract, '#ff7f0e', xscale, yscale, "In Contract", true, true);
-        makePlayerLine(svg, data_out_contract_1, '#1f77b4', xscale, yscale,  "Out of Contract", true, true);
-        makePlayerLine(svg, data_out_contract_2, '#1f77b4', xscale, yscale,  "Out of Contract", false, false);
+            //data_in_contract = prepend(data_out_contract_2[data_out_contract_2.length - 1], data_out_contract);
+            data_in_contract.unshift(data_out_contract_2[data_out_contract_2.length - 1])
+
+            makePlayerLine(svg, data_in_contract, '#ff7f0e', xscale, yscale, "In Contract", true, true);
+            makePlayerLine(svg, data_out_contract_1, '#1f77b4', xscale, yscale,  "Out of Contract", true, true);
+            makePlayerLine(svg, data_out_contract_2, '#1f77b4', xscale, yscale,  "Out of Contract", false, false);
+        }
     }
     makeHorizontalLine(svg, 8, xscale, yscale, "green", "MVP Level");
     makeHorizontalLine(svg, 5, xscale, yscale, "blue", "All Star Level");  
