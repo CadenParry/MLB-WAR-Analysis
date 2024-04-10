@@ -66,6 +66,8 @@ function testPlayerInfo(selected_player, data)
 
     //money per year
     per_year = amountINT/length
+
+    console.log(inContract)
     dollar_per_WAR_IN = ((per_year * inCounter) / inContract).toFixed(0)
 
     dollar_per_WAR_IN = formatter.format(dollar_per_WAR_IN).replace('.00', '')
@@ -75,13 +77,16 @@ function testPlayerInfo(selected_player, data)
     player = player.toUpperCase();
     $("#playername").text(player);
     $("#largestcontract").text(length + " year(s) " + amount);
-    $("#avgwar-out").text((outContract/outCounter).toFixed(2) + " per WAR");
-    $("#avgwar-in").text((inContract/inCounter).toFixed(2) + " per WAR");
-    $("#dollarperwar-in").text(dollar_per_WAR_IN + " (MLB Average: $4,400,000)");
-
-    console.log("Average WAR Out of Contract: " + outContract/outCounter)
-    console.log("Average WAR In Contract: " + inContract/inCounter)
-    console.log("Dollar per WAR In Contract: " + dollar_per_WAR_IN + " (MLB Average $4,400,000")
+    $("#avgwar-out").text((outContract/outCounter).toFixed(2) + " WAR");
+    $("#avgwar-in").text((inContract/inCounter).toFixed(2) + " WAR");
+    if(inContract < 1)
+    {
+        $("#dollarperwar-in").text(amount + ' for ' + inContract.toFixed(3) + " WAR")
+    }
+    else
+    {
+        $("#dollarperwar-in").text(dollar_per_WAR_IN + " (current average: $4.4 million)");
+    }
 }
 
 function initialize(playerData){
