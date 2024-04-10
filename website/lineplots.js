@@ -60,9 +60,10 @@ function testPlayerInfo(selected_player, data)
             inCounter += 1
         }
     }
-    
     console.log(player);
     console.log("Largest Contract: " + length + " year " + amount + " contract ")
+
+    // color scalled bar (red to green)
     console.log("Average WAR Out of Contract: " + outContract/outCounter)
     console.log("Average WAR In Contract: " + inContract/inCounter)
     console.log("Dollar per WAR In Contract: ")
