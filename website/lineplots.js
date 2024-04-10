@@ -43,7 +43,8 @@ function testPlayerInfo(selected_player, data)
     let filtered = data.filter(function(d){ return selected_player == d.player; })
 
     player = filtered[0].player
-    amount = formatter.format(filtered[0].amount).replace('.00', '')
+    amountINT = filtered[0].amount
+    amount = formatter.format(amountINT).replace('.00', '')
     length = filtered[0].length
 
     inContract = 0
@@ -63,22 +64,24 @@ function testPlayerInfo(selected_player, data)
     console.log(player);
     console.log("Largest Contract: " + length + " year " + amount + " contract ")
 
-    // color scalled bar (red to green)
+    //money per year
+    per_year = amountINT/length
+    dollar_per_WAR_IN = ((per_year * inCounter) / inContract).toFixed(0)
+
+    dollar_per_WAR_IN = formatter.format(dollar_per_WAR_IN).replace('.00', '')
+   
 
     // player name to all caps
     player = player.toUpperCase();
     $("#playername").text(player);
-    $("#largestcontract").text(length + " years " + amount);
-    $("#avgwar-out").text((outContract/outCounter).toFixed(2));
-    $("#avgwar-in").text((inContract/inCounter).toFixed(2));
-    $("#dollarperwar-in").text("ABC");
-    $("#dollarperwar-out").text("DEF");
+    $("#largestcontract").text(length + " year(s) " + amount);
+    $("#avgwar-out").text((outContract/outCounter).toFixed(2) + " per WAR");
+    $("#avgwar-in").text((inContract/inCounter).toFixed(2) + " per WAR");
+    $("#dollarperwar-in").text(dollar_per_WAR_IN + " (MLB Average: $4,400,000)");
 
     console.log("Average WAR Out of Contract: " + outContract/outCounter)
     console.log("Average WAR In Contract: " + inContract/inCounter)
-    console.log("Dollar per WAR In Contract: ")
-    console.log("Dollar per WAR Out of Contract: ")
-
+    console.log("Dollar per WAR In Contract: " + dollar_per_WAR_IN + " (MLB Average $4,400,000")
 }
 
 function initialize(playerData){
