@@ -61,13 +61,9 @@ function testPlayerInfo(selected_player, data)
             inCounter += 1
         }
     }
-    console.log(player);
-    console.log("Largest Contract: " + length + " year " + amount + " contract ")
-
     //money per year
     per_year = amountINT/length
 
-    console.log(inContract)
     dollar_per_WAR_IN = ((per_year * inCounter) / inContract).toFixed(0)
 
     dollar_per_WAR_IN = formatter.format(dollar_per_WAR_IN).replace('.00', '')
